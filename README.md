@@ -57,7 +57,7 @@ Also see [Chinese docs / 中文](doc/chinese/job-server.md).
 ## Building IH Docker Image
 
 1. Ensure you have checked out the `jobserver-0.6.2-spark-1.6.1` branch of this repo.
-2. Copy the root Spark directory from the IH Spark-1.6.2 distribution to the root of this repo and name the directory `Spark-1.6.2`.
+2. Copy the root Spark directory from the IH Spark-1.6.2 distribution to the root of this repo and name the directory `spark-1.6.2`.
 3. Build the project by running `sbt ++2.11.6 clean package assembly` from the root of this repo.
 4. Run `sbt docker` from the root of this repo to generate the docker image.
 
