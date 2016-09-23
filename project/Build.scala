@@ -114,6 +114,7 @@ object JobServerBuild extends Build {
         expose(8090)
         expose(9999)    // for JMX
         env("MESOS_VERSION", mesosVersion)
+	env("SCALA_VERSION", "2.11.6")
         runRaw("""echo "deb http://repos.mesosphere.io/ubuntu/ trusty main" > /etc/apt/sources.list.d/mesosphere.list && \
                   apt-key adv --keyserver keyserver.ubuntu.com --recv E56151BF && \
                   apt-get -y update && \
@@ -128,25 +129,21 @@ object JobServerBuild extends Build {
         copy(baseDirectory(_ / "config" / "log4j-stdout.properties").value, file("app/log4j-server.properties"))
         copy(baseDirectory(_ / "config" / "docker.conf").value, file("app/docker.conf"))
         copy(baseDirectory(_ / "config" / "docker.sh").value, file("app/settings.sh"))
+	copy(baseDirectory(_ / "spark-1.6.2").value, "/usr/local/spark")
         // Including envs in Dockerfile makes it easy to override from docker command
         env("JOBSERVER_MEMORY", "1G")
-        env("SPARK_HOME", "/spark")
-        env("SPARK_BUILD", s"spark-${sparkVersion}-bin-hadoop2.4")
+        env("SPARK_HOME", "/usr/local/spark")
+        env("SPARK_BUILD", s"spark-${sparkVersion}-bin-hadoop2.6")
         // Use a volume to persist database between container invocations
         run("mkdir", "-p", "/database")
-        runRaw("""wget http://d3kbcqa49mib13.cloudfront.net/$SPARK_BUILD.tgz && \
-                  tar -xvf $SPARK_BUILD.tgz && \
-                  mv $SPARK_BUILD /spark && \
-                  rm $SPARK_BUILD.tgz
-               """)
         volume("/database")
         entryPoint("app/server_start.sh")
       }
     },
     imageNames in docker := Seq(
-      sbtdocker.ImageName(namespace = Some("velvia"),
+      sbtdocker.ImageName(namespace = Some("influence"),
                           repository = "spark-jobserver",
-                          tag = Some(s"${version.value}.mesos-${mesosVersion.split('-')(0)}.spark-${sparkVersion}"))
+                          tag = Some(s"${version.value}.mesos-${mesosVersion.split('-')(0)}.spark-${sparkVersion}-scala-2.11.6"))
     )
   )
 
@@ -186,7 +183,7 @@ object JobServerBuild extends Build {
     organization := "spark.jobserver",
     crossPaths   := true,
     crossScalaVersions := Seq("2.10.6","2.11.8"),
-    scalaVersion := "2.10.6",
+    scalaVersion := "2.11.6",
     publishTo    := Some(Resolver.file("Unused repo", file("target/unusedrepo"))),
 
     // scalastyleFailOnError := true,

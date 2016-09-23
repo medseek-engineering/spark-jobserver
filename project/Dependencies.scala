@@ -35,11 +35,11 @@ object Dependencies {
     yammerDeps
   ) ++ jodaDeps
 
-  val javaVersion = sys.env.getOrElse("JAVA_VERSION", "7-jre")
+  val javaVersion = sys.env.getOrElse("JAVA_VERSION", "8-jre")
 
   val mesosVersion = sys.env.getOrElse("MESOS_VERSION", "0.28.1-2.0.20.ubuntu1404")
 
-  val sparkVersion = sys.env.getOrElse("SPARK_VERSION", "1.6.1")
+  val sparkVersion = sys.env.getOrElse("SPARK_VERSION", "1.6.2")
   lazy val sparkDeps = Seq(
     "org.apache.spark" %% "spark-core" % sparkVersion % "provided" excludeAll(excludeNettyIo, excludeQQ),
     // Force netty version.  This avoids some Spark netty dependency problem.
